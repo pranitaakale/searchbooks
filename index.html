@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Books</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="image">
+            <img src="img/book.jpg">
+        </div>
+        <div class="card">
+            <div class="main">
+                <h1 class="heading">Search Books</h1>
+                <form id="search_form" class="searchform">
+                    <input type="text" id="search_input">
+                    <button id="submit" onclick="search_book()"><span><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                width="24" height="24"
+                viewBox="0 0 171 171"
+                style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,171.99579v-171.99579h171.99579v171.99579z" fill="none"></path><g fill="#ffffff"><path d="M94.48975,105.92871l17.67334,17.67333c-2.69971,5.14893 -2.97803,10.27002 -0.13917,13.10889l32.25733,32.25733c4.06348,4.06347 12.91406,1.83691 19.70508,-4.98194c6.81885,-6.81885 9.04541,-15.6416 4.98194,-19.70508l-32.2295,-32.25733c-2.86669,-2.83886 -7.98779,-2.56055 -13.13672,0.11133l-17.67333,-17.6455zM60.5625,0c-33.4541,0 -60.5625,27.1084 -60.5625,60.5625c0,33.45411 27.1084,60.5625 60.5625,60.5625c33.45411,0 60.5625,-27.10839 60.5625,-60.5625c0,-33.4541 -27.10839,-60.5625 -60.5625,-60.5625zM60.5625,106.875c-25.57764,0 -46.3125,-20.73486 -46.3125,-46.3125c0,-25.57764 20.73486,-46.3125 46.3125,-46.3125c25.57764,0 46.3125,20.73486 46.3125,46.3125c0,25.57764 -20.73486,46.3125 -46.3125,46.3125z"></path></g></g></svg></span>
+                      </button>
+                </form>
+            </div>
+            <div id="search_result" class="result">
+                <p id="result_p"></p>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var form = document.getElementById("search_form");
+        var txt = document.getElementById("result_p");
+        var bk = '<div class="txt">Book :</div>';
+        var auth = '<div class="txt">Author(s) :</div>';
+
+        function handleForm(event) {
+            event.preventDefault();
+        }
+        form.addEventListener('submit', handleForm);
+
+        function search_book() {
+            var search = document.getElementById("search_input").value;
+            console.log(search);
+
+            if (search) {
+
+                function handleResponse(response) {
+                    txt.innerHTML = " "
+                    for (var i = 0; i < response.items.length; i++) {
+                        var item = response.items[i];
+
+                        var url = item.volumeInfo.imageLinks.thumbnail;
+                        console.log(item.volumeInfo);
+                        txt.innerHTML += bk + item.volumeInfo.title + "<br>" + auth + item.volumeInfo.authors + "<br> " + "<img id='book_img' src=" + url + " /><div class='btn'><a href=" + item.volumeInfo.infoLink + ">More Info</a><a href=" + item.volumeInfo.previewLink + ">Preview</a></div><br><hr>";
+                    };
+                    return false;
+                };
+
+                fetch("https://www.googleapis.com/books/v1/volumes?q=" + search).
+                then((apidata) => {
+                    return apidata.json();
+                }).
+                then((actual) => {
+                    handleResponse(actual);
+                });
+            }
+        }
+    </script>
+    <!--<script>https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=AIzaSyBPRN5IcPOVzkhrXoi857_StBpnHgC_5nA</script>-->
+</body>
+
+</html>
